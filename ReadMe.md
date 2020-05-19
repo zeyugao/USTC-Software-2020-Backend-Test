@@ -1,7 +1,5 @@
 # USTC Software 2020 Backend Test
 
-后端测试题
-
 DDL：
 
 ## 背景
