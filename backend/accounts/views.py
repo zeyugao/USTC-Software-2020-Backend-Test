@@ -1,6 +1,11 @@
 from django.views.generic.base import View
 from django.http import JsonResponse
 from django.utils.translation import gettext
+from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import login
+from django.contrib.auth import logout
+from django.contrib.auth.password_validation import validate_password
+User = get_user_model()
 
 class LoginView(View):
     http_method_names = ['get', 'post']
@@ -11,10 +16,18 @@ class LoginView(View):
     def post(self, request):
         username = request.POST.get('username')
         password = request.POST.get('password')
-        return JsonResponse({
-            'code': 200,
-            'msg': [gettext('Login successfully')]
-        })
+        user = authenticate(request, username=username, password=password)
+        if user:
+            return JsonResponse({
+                'code': 200,
+                'msg': [gettext('Login successfully')]
+            })
+        else:
+            return JsonResponse({
+                'code': 401,
+                'msg': [gettext('Invalid username or password')]
+            })
+
 
 class RegisterView(View):
     http_method_names = ['get', 'post']
@@ -25,6 +38,12 @@ class RegisterView(View):
     def post(self, request):
         username = request.POST.get('username')
         password = request.POST.get('password')
+
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({
+                'code': 401,
+                'msg': [gettext('Invalid username')]
+            })
         return JsonResponse({
             'code': 200,
             'msg': [gettext('Register successfully')]
