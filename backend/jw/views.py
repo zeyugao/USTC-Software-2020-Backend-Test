@@ -10,4 +10,6 @@ class GetAllView(View):
     http_method_names = ['get']
 
     def get(self, request):
-        Ke.objects.all() # ?
+        allcourse = Ke.objects.all().order_by(id) # ?
+        # allcourse to dict
+        # json return dict
