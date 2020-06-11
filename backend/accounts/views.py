@@ -1,12 +1,12 @@
 from django.views.generic.base import View
 from django.http import JsonResponse
-from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.contrib.auth import logout
 from django.contrib.auth.password_validation import validate_password
+from backend.accounts.models import Stu
 
-User = get_user_model()
-
+User = Stu.UserAccount
 
 class LoginView(View):
     http_method_names = ['get', 'post']
