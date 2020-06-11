@@ -1,10 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
+from .forms import *
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 # Create your views here.
 
 def loginPage(request):
+    context = {}
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -15,6 +18,48 @@ def loginPage(request):
             return redirect('home')
         else:
             messages.info(request, 'username or password invalid, please try again')
+    return render(request, 'enrollmentSystem/login.html', context)
 
 def registerPage(request):
-    pass
+    form = UserForm()
+    context = {
+        'form': form,
+    }
+    if request.method == 'POST':
+        form = UserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            username = form.clean_date['username']
+            Student.objects.create(
+                user = user, 
+                name = username
+            )
+            messages.success(request, 'Student ' + username + ' added successfully')
+            return redirect('login')
+    return render(request, 'enrollmentSystem/register.html', context)
+
+def logoutPage(request):
+    if request.user.is_authenticated:
+        logout(request)
+    return redirect('home')
+
+@login_required(login_url = 'login')
+def course(request, pk):
+    course = get_object_or_404(Course, pk=pk)
+    context = { 'course': course }
+    if request.method == 'POST':
+        student = request.user.student
+        course.student.add(student)
+    return render(request, 'enrollmentSystem/course.html', context)
+
+def allCourses(request):
+    queryset = Course.objects.all()
+    context = { 'queryset': queryset }
+    return render(request, 'enrollmentSystem/all.html', context)
+
+@login_required(login_url='login')
+def myCourse(request):
+    courses = request.user.student.course_set.all()
+    context = { 'courses': courses }
+    return render(request, 'enrollmentSystem/my_courses.html', context)
+
