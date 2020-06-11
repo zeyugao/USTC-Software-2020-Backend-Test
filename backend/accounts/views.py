@@ -1,6 +1,5 @@
 from django.views.generic.base import View
 from django.http import JsonResponse
-from django.utils.translation import gettext
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth import login
 from django.contrib.auth import logout
@@ -23,12 +22,12 @@ class LoginView(View):
             login(request, user)
             return JsonResponse({
                 'code': 200,
-                'msg': [gettext('Login successfully')]
+                'msg': 'Login successfully'
             })
         else:
             return JsonResponse({
                 'code': 401,
-                'msg': [gettext('Invalid username or password')]
+                'msg': 'Invalid username or password'
             })
 
 
@@ -45,12 +44,12 @@ class RegisterView(View):
         if User.objects.filter(username=username).exists():
             return JsonResponse({
                 'code': 401,
-                'msg': [gettext('Invalid username')]
+                'msg': 'Invalid username'
             })
         User.objects.create_user(username=username, password=password)
         return JsonResponse({
             'code': 200,
-            'msg': [gettext('Register successfully')]
+            'msg': 'Register successfully'
         })
 
 
