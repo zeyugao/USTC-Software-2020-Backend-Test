@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.contrib.auth import logout
 from django.contrib.auth.password_validation import validate_password
-from backend.accounts.models import Stu
+from accounts.models import Stu
 
 User = Stu.UserAccount
 
