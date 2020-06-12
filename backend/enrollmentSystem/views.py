@@ -29,7 +29,7 @@ def registerPage(request):
         form = UserForm(request.POST)
         if form.is_valid():
             user = form.save()
-            username = form.clean_date['username']
+            username = form.clean_data['username']
             Student.objects.create(
                 user = user, 
                 name = username
@@ -43,7 +43,7 @@ def logoutPage(request):
         logout(request)
     return redirect('home')
 
-@login_required(login_url = 'login')
+@login_required
 def course(request, pk):
     course = get_object_or_404(Course, pk=pk)
     context = { 'course': course }
@@ -55,11 +55,24 @@ def course(request, pk):
 def allCourses(request):
     queryset = Course.objects.all()
     context = { 'queryset': queryset }
-    return render(request, 'enrollmentSystem/all.html', context)
+    return render(request, 'enrollmentSystem/all_courses.html', context)
 
-@login_required(login_url='login')
+@login_required
+def availableCourses(request):
+    my_grade = request.user.student.grade
+    queryset = Course.objects.filter(grade=my_grade)
+    context = { 'queryset': queryset }
+    return render(request, 'enrollmentSystem/available_courses.html', context)
+
+@login_required
 def myCourse(request):
     courses = request.user.student.course_set.all()
     context = { 'courses': courses }
-    return render(request, 'enrollmentSystem/my_courses.html', context)
+    return render(request, 'enrollmentSystem/my_course.html', context)
 
+@login_required
+def dropCourse(request, pk):
+    course = get_object_or_404(Course, pk=pk)
+    if request.method == 'POST':
+        request.user.student.course_set.remove(course)
+        return redirect('my_course')
