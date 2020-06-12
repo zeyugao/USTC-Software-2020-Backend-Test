@@ -8,6 +8,6 @@ class Stu(models.Model):
 
 
 class Ke(models.Model):
-    id = models.AutoField(primary_key=True)
+    kid = models.AutoField(primary_key=True)
     name = models.CharField(max_length=256)
     grade = models.PositiveIntegerField(null=True, blank=True)
