@@ -20,5 +20,21 @@ class GetAllView(View):
 class GetPrivkeView(View):
     http_method_names = ['get']
 
-    def get(self, request):
+    # def get(self, request):
         # privke = request.
+
+class ElecKeView(View):
+    http_method_names = ['get', 'post']
+
+    def get(self, request):
+        pass
+
+    # def post(self, request):
+    
+class DropKeView(View):
+    http_method_names = ['get', 'post']
+
+    def get(self, request):
+        pass
+
+    # def post(self, request):
