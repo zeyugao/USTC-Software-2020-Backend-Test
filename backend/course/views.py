@@ -1,38 +1,66 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from .models import Course
 from account.models import Student
 # Create your views here.
 @login_required
 def enroll(request, pk):
-    course = get_object_or_404(Course, pk=pk)
+    try:
+        course = Course.objects.get(pk=pk)
+    except Course.DoesNotExist:
+        return JsonResponse({
+            'status': 404,
+            'msg': 'Course not found'
+        })
     context = { 'course': course }
     if request.method == 'POST':
         student = request.user.student
         course.student.add(student)
-    return render(request, 'enrollmentSystem/course.html', context)
+        return JsonResponse({
+            'status': 200,
+            'msg': 'Added Successfully'
+        })
 
 def allCourses(request):
     queryset = Course.objects.all()
     context = { 'queryset': queryset }
-    return render(request, 'enrollmentSystem/all_courses.html', context)
+    return JsonResponse({
+        'status': 200,
+        'msg': 'Success'
+    })
 
 @login_required
 def availableCourses(request):
     my_grade = request.user.student.grade
     queryset = Course.objects.filter(grade=my_grade)
     context = { 'queryset': queryset }
-    return render(request, 'enrollmentSystem/available_courses.html', context)
+    return JsonResponse({
+        'status': 200,
+        'msg': 'Success'
+    })
 
 @login_required
 def myCourse(request):
     courses = request.user.student.course_set.all()
     context = { 'courses': courses }
-    return render(request, 'enrollmentSystem/my_course.html', context)
+    return JsonResponse({
+        'status': 200,
+        'msg': 'Success'
+    })
 
 @login_required
 def dropCourse(request, pk):
-    course = get_object_or_404(Course, pk=pk)
+    try:
+        course = Course.objects.get(pk=pk)
+    except Course.DoesNotExist:
+        return JsonResponse({
+            'status': 404,
+            'msg': 'Course not found'
+        })
     if request.method == 'POST':
         request.user.student.course_set.remove(course)
-    return redirect('my_course')
+        return JsonResponse({
+            'status': 200,
+            'msg': 'Course Dropped'
+        })
