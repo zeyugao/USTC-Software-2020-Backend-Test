@@ -19,6 +19,7 @@ class Student(models.Model):
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     def __str__(self):
         return self.user.username
+
 class Course(models.Model):
     FRESHMAN = 'FR'
     SOPHOMORE = 'SO'
