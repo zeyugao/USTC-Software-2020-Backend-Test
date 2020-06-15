@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
+from django.core.exceptions import ValidationError
 from .models import *
 from .forms import *
 from django.contrib.auth import authenticate, login, logout
@@ -13,33 +15,63 @@ def loginPage(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            messages.success(request, 'login successful')
-            return redirect('home')
+            return JsonResponse({
+                'status': 200,
+                'msg': 'Login Successfully'
+            })
         else:
-            messages.info(request, 'username or password invalid, please try again')
-    return render(request, 'enrollmentSystem/login.html', context)
+            return JsonResponse({
+                'status': 401,
+                'msg': 'Login Failed'
+            })
 
 def registerPage(request):
-    form = UserForm()
-    context = {
-        'form': form,
-    }
     if request.method == 'POST':
-        form = UserForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            username = form.clean_data['username']
-            grade = form.clean_data['grade']
-            Student.objects.create(
-                user = user, 
-                grade = grade
-            )
-            messages.success(request, 'Student ' + username + ' added successfully')
-            return redirect('login')
-    return render(request, 'enrollmentSystem/register.html', context)
+        context = {
+            'Freshman': 'FR',
+            'Sophmore': 'SO',
+            'Junior': 'JR',
+            'Senior': 'SR',
+            'Graduate': 'GR',
+        }
+        username = request.POST.get('username')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        try:#TO DO!!
+            validate(username)
+        except ValidationError as e:
+            return JsonResponse({
+                'status': 410, 
+                'msg': e.message
+            })
+        try:#TO DO!!
+            validate(password1)
+        except ValidationError as e:
+            return JsonResponse({
+                'status': 410, 
+                'msg': e.message
+            })
+        try: 
+            grade = context[request.POST.get('grade')]
+        except KeyError:
+            return JsonResponse({
+                'status': 410, 
+                'msg': 'Key does not exist'
+            })
+        user = User.objects.create(username=username, password=password1)
+        Student.objects.create(
+            user = user, 
+            grade = grade
+        )
+        return JsonResponse({
+            'status': 200,
+            'msg': 'Student Created Successfully'
+        })
 
 def logoutPage(request):
     if request.user.is_authenticated:
         logout(request)
-    return redirect('home')
-
+    return JsonResponse({
+        'status': 200,
+        'msg': 'Logout Successfully'
+    })
