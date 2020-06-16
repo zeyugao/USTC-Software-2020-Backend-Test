@@ -9,7 +9,6 @@ from django.contrib.auth.models import User
 
 
 def account_register(request):
-    # request这是前端请求发来的请求，携带的所有数据，django给我们做了一些列的处理，封装成一个对象传过来
     if request.method == 'GET':
         return render(request, 'register.html')
     if request.method == 'POST':
@@ -24,6 +23,9 @@ def account_register(request):
                     # 查找用户名是否已存在，这里username是类属性，name是刚刚赋值的用户名
                     # 不能用auth.authenticate(request, username=name)，它还需要password参数
                         return JsonResponse({"key": "401", "msg": "the username exists"})
+
+                #stu = User(username=name, pwd=pwd)
+                #stu.save()
                 User.objects.create_user(username=name, password=pwd)  # 创建普通用户
                 return JsonResponse({"key": "402", "msg": "register successfully"})
             else:
@@ -103,8 +105,7 @@ def choose_course(request):
                 a.course_student.add(request.user)
                 a.save()
 
-                return JsonResponse({"key": "605", "msg": Course.objects.all()[0].course_student})
-
+                return JsonResponse({"key": "605", "msg": "choose course successfully"})
 
 
 def my_course(request):
@@ -117,13 +118,11 @@ def my_course(request):
             resp = {"key": "606", "msg": "Get you courses successfully"}
             for x in course:
                 resp.setdefault(x.course_id, x.course_name)
-                # (key,d),若key在字典中，返回对应值，d无效；否则添加key-d键值对
     return JsonResponse(resp)
 
 
 def delete_course(request):
     if not request.user.is_authenticated:
-        # 判断是否登录
         return JsonResponse({"key": "601", "msg": "please login first"})
     else:
         if request.method == 'GET':
@@ -137,9 +136,13 @@ def delete_course(request):
             else:
                 a = User.objects.get(username=request.user.username).Course_set.all()
                 b = Course.objects.get(course_id=delete)
-                a.remove(b)
-                a.save()
-                return JsonResponse({"key": "607", "msg": "delete course successfully"})
+                if b:
+                    a.remove(b)
+                    a.save()
+                    return JsonResponse({"key": "607", "msg": "delete course successfully"})
+                else:
+                    return JsonResponse({"key": "608", "msg": "you didn't choose this course"})
+
 
 
 # Create your views here.
