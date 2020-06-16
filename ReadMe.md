@@ -91,15 +91,15 @@ DDL：2020/6/30
 
 请将你为前端组的同学撰写的报告放在这里。
 
-后面有一个示例
+# 项目功能总述
 
-## 一个示例
+该项目可以实现用户的注册、登录、与登出，所有开设课程的查看，选课，用户已选课程的查看与删除
 
-### 登录
+### 注册
 
 #### URL
 
-`accounts/login`
+`account/register`
 
 #### POST
 
@@ -107,20 +107,162 @@ DDL：2020/6/30
 
 | key      | description |
 | -------- | ----------- |
-| username | 用户名      |
-| password | 密码        |
+| name     |  用户名     |
+| pwd      |  密码        |
+| re_pwd   |  确认密码    |
 
 ##### 响应参数
 
 | key | description |
 | --- | ----------- |
-| msg | 返回的消息  |
+| key | 返回的消息  |
 
 | status | description    |
 | ------ | -------------- |
-| 200    | 成功           |
-| 401    | 登陆失败       |
-| 500    | 服务器内部错误 |
+| 401    | the username exists          |
+| 402    | register successfully      |
+| 403    | please input the same password |
+|404   |blank input is not allowed|
+
+### 登录
+
+#### URL
+
+`account/login`
+
+#### POST
+
+##### 请求参数
+
+| key      | description |
+| -------- | ----------- |
+| name     |  用户名     |
+| pwd      |  密码        |
+
+##### 响应参数
+
+| key | description |
+| --- | ----------- |
+| key | 返回的消息  |
+
+| status | description    |
+| ------ | -------------- |
+| 501    | login successfully        |
+| 502    | pwd error     |
+| 503    | username doesn't exist |
+
+### 登出
+
+#### URL
+
+`account/logout`
+
+#### GET
+
+##### 响应参数
+
+| key | description |
+| --- | ----------- |
+| key | 返回的消息  |
+
+| status | description    |
+| ------ | -------------- |
+| 601    | please login first        |
+| 602    | logout successfully   |
+
+### 查看所有课程
+
+#### URL
+
+`account/allcourse`
+
+#### GET
+
+##### 响应参数
+
+| key | description |
+| --- | ----------- |
+| key | 返回的消息  |
+
+| status | description    |
+| ------ | -------------- |
+| 601    | please login first        |
+| 603    | Get all courses successfully   |
+
+### 选择课程
+
+#### URL
+
+`account/choose`
+
+#### POST
+
+##### 请求参数
+
+| key      | description |
+| -------- | ----------- |
+| choice     |  课程的pk     |
+
+
+##### 响应参数
+
+| key | description |
+| --- | ----------- |
+| key | 返回的消息  |
+
+| status | description    |
+| ------ | -------------- |
+| 601    | please login first        |
+| 604    | you didn't make a choice     |
+| 605   | choose course successfully |
+
+
+### 查看用户已选课程
+
+#### URL
+
+`account/mycourse`
+
+#### GET
+
+##### 响应参数
+
+| key | description |
+| --- | ----------- |
+| key | 返回的消息  |
+
+| status | description    |
+| ------ | -------------- |
+| 601    | please login first        |
+| 606    | Get you courses successfully   |
+
+### 用户删除课程
+
+#### URL
+
+`account/delete`
+
+#### POST
+
+##### 请求参数
+
+| key      | description |
+| -------- | ----------- |
+| delete     |  课程的pk     |
+
+
+##### 响应参数
+
+| key | description |
+| --- | ----------- |
+| key | 返回的消息  |
+
+| status | description    |
+| ------ | -------------- |
+| 601    | please login first        |
+| 604    | you didn't make a choice     |
+| 607   | delete course successfully |
+|608|you didn't choose this course|
 
 ### 补充说明
 
