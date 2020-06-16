@@ -1,0 +1,40 @@
+<meta charset="utf-8">
+
+    <div class="inf">
+
+        <h2>已开设课程信息表</h2>
+
+        <div class="guodong">
+
+        <table border="1">
+
+                <tr>
+
+                    <td>课&nbsp&nbsp程&nbsp&nbsp代&nbsp&nbsp号</td>
+
+                    <td>课&nbsp&nbsp程&nbsp&nbsp名&nbsp&nbsp称</td>
+
+                </tr>
+
+            {% for x in course %}
+
+            <tr>
+
+                    <td>{{ x.course_id }}</td>
+
+                    <td>{{ x.course_name }}</td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+        </div>
+
+        </form>
+
+    </div>
+
+    </div>
+
