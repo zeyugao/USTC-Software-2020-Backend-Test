@@ -14,7 +14,7 @@ class Course(models.Model):
         (SENIOR, 'Senior'),
         (GRADUATE, 'Graduate'),
     ]
-    grade = models.CharField(max_length = 2, choices=GRADE, default = FRESHMAN)
-    name = models.CharField(max_length=255, null=True)
-    description = models.CharField(max_length=1000, null = True)
+    grade = models.CharField(max_length = 2, choices = GRADE, default = FRESHMAN)
+    name = models.CharField(max_length = 255, null = True)
+    description = models.CharField(max_length = 1000, null = True)
     student = models.ManyToManyField(Student)

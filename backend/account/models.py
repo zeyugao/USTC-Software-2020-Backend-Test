@@ -15,7 +15,7 @@ class Student(models.Model):
         (SENIOR, 'Senior'),
         (GRADUATE, 'Graduate'),
     ]
-    grade = models.CharField(max_length = 2, choices=GRADE, default = FRESHMAN)
-    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+    grade = models.CharField(max_length = 2, choices = GRADE, default = FRESHMAN)
+    user = models.OneToOneField(User, null = True, on_delete = models.CASCADE)
     def __str__(self):
         return self.user.username
