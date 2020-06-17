@@ -70,7 +70,13 @@ class DropCourse(View):
                 'status': 404,
                 'msg': 'Course not found'
             })
-        request.user.student.course_set.remove(course)
+        try:
+            request.user.student.course_set.remove(course)
+        except ValueError:
+            return JsonResponse({
+                'status': 409,
+                'msg': 'Course Not Enrolled in'
+            })
         return JsonResponse({
             'status': 200,
             'msg': 'Course Dropped'
