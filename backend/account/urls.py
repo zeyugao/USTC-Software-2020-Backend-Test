@@ -7,4 +7,5 @@ urlpatterns = [
     path('login',views.userLogin,name='revLogin'),
     path('logout',views.userLogout,name='revLogout'),
     path('changePassword',views.userChangePassword,name='revChangePassword'),
+    path('setGrade',views.userSetGrade,name='revSetGrade'),
 ]

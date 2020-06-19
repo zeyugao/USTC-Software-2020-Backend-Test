@@ -6,4 +6,4 @@ class student(AbstractUser):
     grade=models.IntegerField()
 
     def __str__(self):
-        return None
+        return self.username

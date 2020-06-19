@@ -1,95 +1,122 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.password_validation import password_changed, validate_password
-from .validate import usernameValidation, validationErr
-from django.core.exceptions import ValidationError as sysValiErr
+from .validate import usernameValidation, gradeValidation, requiredArgumentValidation
+from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth import login, logout
-from .wrapper import loginPermission,unLogPermission
+from .wrapper import loginPermission, unLogPermission, methodFilter
 # Create your views here.
 userModel = get_user_model()
 
 
 @unLogPermission
+@methodFilter(['POST'])
 def userRegistration(request):
-    if request.method == 'POST':
+    if request.method=='POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        if not username:
-            return JsonResponse({"status": 401,"msg": "Please input username."})
-        if not password:
-            return JsonResponse({"status": 402,"msg": "Please input password."})
-        # Validate username
+        grade = request.POST.get('grade')
+        # Validate the wholeness of args.
+        try:
+            requiredArgumentValidation([(username, 'username'),
+                                        (password, 'password'),
+                                        (grade, 'grade')])
+        except ValidationError as e:
+            return JsonResponse({"status": 401, "msg": e.messages})
+        # Validate the username.
         try:
             usernameValidation(username, regFlag=True)
-        except validationErr as e:
-            return JsonResponse({"status": 401,"msg": e.msg})
-        # Validate password
+        except ValidationError as e:
+            return JsonResponse({"status": 401, "msg": e.messages})
+        # Validate the password.
         try:
             validate_password(password, request.user)
-        except sysValiErr as e:
-            return JsonResponse({"status": 402,"msg": e.messages})
-        # create new user
+        except ValidationError as e:
+            return JsonResponse({"status": 402, "msg": e.messages})
+        # Validate the grade.
+        try:
+            gradeValidation(grade)
+        except ValidationError as e:
+            return JsonResponse({"status": 411, "msg": e.messages})
+        # Create a new user.
         userModel.objects.create_user(
-            username=username, password=password,grade=0,)
-        return JsonResponse({"status": 200,"msg": "Register successfully."})
+            username=username, password=password, grade=grade)
+        return JsonResponse({"status": 200, "msg": "Register successfully."})
 
-    else:
-        return JsonResponse({"status": 400,"msg": "Request method mismatch."})
 
 @unLogPermission
+@methodFilter(['POST'])
 def userLogin(request):
-    if request.user.is_authenticated:
-        return JsonResponse({"status": 404,"msg": "You have login."})
-    if request.method == 'POST':
+    if request.method=='POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        if not username:
-            return JsonResponse({"status": 401,"msg": "Please input username."})
-        if not password:
-            return JsonResponse({"status": 402,"msg": "Please input password."})
+        try:
+            requiredArgumentValidation([(username, 'username'),
+                                        (password, 'password')])
+        except ValidationError as e:
+            return JsonResponse({"status": 401, "msg": e.messages})
         # Validate username
         try:
             usernameValidation(username)
-        except validationErr as e:
-            return JsonResponse({"status": 401,"msg": e.msg})
+        except ValidationError as e:
+            return JsonResponse({"status": 401, "msg": e.messages})
         userInstance = authenticate(
             request, username=username, password=password)
         if userInstance:
             login(request, userInstance)
-            return JsonResponse({"status": 200,"msg": "Login successfully."})
+            return JsonResponse({"status": 200, "msg": "Login successfully."})
         else:
-            return JsonResponse({"status": 403,"msg": "Wrong username or password."})
+            return JsonResponse({"status": 403, "msg": "Wrong username or password."})
 
-    else:
-        return JsonResponse({"status": 400,"msg": "Request method mismatch."})
 
 @loginPermission
+@methodFilter(['GET'])
 def userLogout(request):
-    logout(request)
-    return JsonResponse({"status": 200,"msg": "Logout successfully."})
+    if request.method=='GET':
+        logout(request)
+        return JsonResponse({"status": 200, "msg": "Logout successfully."})
+
 
 @loginPermission
+@methodFilter(['POST'])
 def userChangePassword(request):
-    if request.method == 'POST':
+    if request.method=='POST':
         oldPassword = request.POST.get('oldPassword')
         newPassword = request.POST.get('newPassword')
-        if not oldPassword:
-            return JsonResponse({"status": 407,"msg": "Please input old password."})
-        if not newPassword:
-            return JsonResponse({"status": 408,"msg": "Please input new password."})
+        try:
+            requiredArgumentValidation([(oldPassword, 'oldPassword'),
+                                        (newPassword, 'newPassword')])
+        except ValidationError as e:
+            return JsonResponse({"status": 401, "msg": e.messages})
         try:
             validate_password(newPassword, request.user)
-        except sysValiErr as e:
-            return JsonResponse({"status": 409,"msg": e.messages})
+        except ValidationError as e:
+            return JsonResponse({"status": 409, "msg": e.messages})
         userInstance = authenticate(
             request, username=request.user.username, password=oldPassword)
         if userInstance:
             userInstance.set_password(newPassword)
             userInstance.save()
-            login(request,userInstance)
-            return JsonResponse({"status": 200,"msg": "Update password successfully."})
+            login(request, userInstance)
+            return JsonResponse({"status": 200, "msg": "Update password successfully."})
         else:
-            return JsonResponse({"status": 410,"msg": "Old password is wrong."})
-    else:
-        return JsonResponse({"status": 400,"msg": "Request method mismatch."})
+            return JsonResponse({"status": 410, "msg": "Old password is wrong."})
+
+
+@loginPermission
+@methodFilter(['POST'])
+def userSetGrade(request):
+    if request.method=='POST':
+        grade=request.POST.get('grade')
+        try:
+            requiredArgumentValidation([(grade,'grade')])
+        except ValidationError as e:
+            return JsonResponse({"status":401,"msg":e.messages})
+        try:
+            gradeValidation(grade)
+        except ValidationError as e:
+            return JsonResponse({"status":417,"msg":e.messages})
+        request.user.grade=int(grade)
+        request.user.save()
+        return JsonResponse({"status":200,"msg":"Update grade successfully."})
