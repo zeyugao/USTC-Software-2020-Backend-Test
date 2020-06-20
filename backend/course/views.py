@@ -6,6 +6,7 @@ from account.wrapper import loginPermission, unLogPermission, methodFilter
 from account.validate import requiredArgumentValidation, gradeValidation
 from django.core.exceptions import ValidationError
 from .filters import userGETFilter, commonGETFilter
+from account.validate import requiredArgumentGET
 
 userModel = get_user_model()
 
@@ -24,13 +25,10 @@ def listUserResult(request, userFilter):
 
 @loginPermission
 @methodFilter(['GET'])
+@requiredArgumentGET(['pk'])
 def setLearnStatus(request):
     if request.method == 'GET':
         pk = request.GET.get('pk')
-        try:
-            requiredArgumentValidation([(pk, 'pk')])
-        except ValidationError as e:
-            return JsonResponse({"status": 401, "msg": e.messages})
 
         # Check if the course has been chosen.
         userSearchResult = request.user.resultSet.filter(result__courseID=pk)
@@ -50,13 +48,10 @@ def setLearnStatus(request):
 
 @loginPermission
 @methodFilter(['GET'])
+@requiredArgumentGET(['pk'])
 def chooseCourse(request):
     if request.method == 'GET':
         pk = request.GET.get('pk')
-        try:
-            requiredArgumentValidation([(pk, 'pk')])
-        except ValidationError as e:
-            return JsonResponse({"status": 401, "msg": e.messages})
 
         # Check if the course has been chosen.
         userSearchResult = [(i.result.courseID, i.haveLearnt)
@@ -92,14 +87,10 @@ def chooseCourse(request):
 
 @loginPermission
 @methodFilter(['GET'])
+@requiredArgumentGET(['pk'])
 def exitCourse(request):
     if request.method == 'GET':
         pk = request.GET.get('pk')
-
-        try:
-            requiredArgumentValidation([(pk, 'pk')])
-        except ValidationError as e:
-            return JsonResponse({"status": 401, "msg": e.messages})
 
         # Check if the course has been chosen.
         userSearchResult = request.user.resultSet.filter(result__courseID=pk)
@@ -136,13 +127,10 @@ def listAllCourse(request, userFilter, commonFilter):
 
 
 @methodFilter(['GET'])
+@requiredArgumentGET(['pk'])
 def listPrefix(request):
     if request.method == 'GET':
         pk = request.GET.get('pk')
-        try:
-            requiredArgumentValidation([(pk, "pk")])
-        except ValidationError as e:
-            return JsonResponse({"status": 401, "msg": e.messages})
         searchResult = course.objects.filter(courseID=pk)
         if not searchResult:
             return JsonResponse({"status": 414, "msg": "The course doesn\'t exists."})
@@ -153,13 +141,10 @@ def listPrefix(request):
 
 @loginPermission
 @methodFilter(['GET'])
+@requiredArgumentGET(['pk'])
 def haveLearntCourse(request):
     if request.method=='GET':
         pk = request.GET.get('pk')
-        try:
-            requiredArgumentValidation([(pk, "pk")])
-        except ValidationError as e:
-            return JsonResponse({"status": 401, "msg": e.messages})
         userSearchResult = request.user.resultSet.filter(result__courseID=pk)
         if not userSearchResult:
             return JsonResponse({"status": 416, "msg": "You havn\'t chosen the course."})

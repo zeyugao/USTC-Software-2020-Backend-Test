@@ -31,29 +31,29 @@ DDL：2020/6/30
 
 #### 用户账户相关
 
-* 注册与登录账户
-* 退出账户
+* 注册与登录账户 x
+* 退出账户 x
 
 #### 系统相关
 
-* 列出所有课程
-* 用户根据课程的`pk`选中课程
-* 列出用户选中的课程
-* 退课
+* 列出所有课程 x
+* 用户根据课程的`pk`选中课程 x
+* 列出用户选中的课程 x
+* 退课 x
 
 ### 可以选做的功能
 
 #### 用户相关
 
-* 添加年级属性
-* 某个课程是否学过（参考[Extra fields on many-to-many relationships](https://docs.djangoproject.com/en/3.0/topics/db/models/#extra-fields-on-many-to-many-relationships)）
+* 添加年级属性 x
+* 某个课程是否学过（参考[Extra fields on many-to-many relationships](https://docs.djangoproject.com/en/3.0/topics/db/models/#extra-fields-on-many-to-many-relationships)）x
 
 #### 系统相关
 
-* 根据年级分类课程
-* 返回给用户的结果中只展示符合用户年级的课程
-* 添加前置课程，并在结果中返回相对应的前置课程
-* 更新用户是否学过某个课程
+* 根据年级分类课程 x
+* 返回给用户的结果中只展示符合用户年级的课程 
+* 添加前置课程，并在结果中返回相对应的前置课程 x
+* 更新用户是否学过某个课程 x
 
 > 前置课程即为用户想要选中某个课程，必须要先选中的课程，例如数分A2需要先学数分A1。注意避免循环引用。
 

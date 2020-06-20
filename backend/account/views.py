@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.password_validation import password_changed, validate_password
-from .validate import usernameValidation, gradeValidation, requiredArgumentValidation
+from .validate import usernameValidation, gradeValidation, requiredArgumentPOST
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth import login, logout
@@ -12,18 +12,12 @@ userModel = get_user_model()
 
 @unLogPermission
 @methodFilter(['POST'])
+@requiredArgumentPOST(['username','password','grade'])
 def userRegistration(request):
     if request.method=='POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         grade = request.POST.get('grade')
-        # Validate the wholeness of args.
-        try:
-            requiredArgumentValidation([(username, 'username'),
-                                        (password, 'password'),
-                                        (grade, 'grade')])
-        except ValidationError as e:
-            return JsonResponse({"status": 401, "msg": e.messages})
         # Validate the username.
         try:
             usernameValidation(username, regFlag=True)
@@ -47,15 +41,11 @@ def userRegistration(request):
 
 @unLogPermission
 @methodFilter(['POST'])
+@requiredArgumentPOST(['username','password'])
 def userLogin(request):
     if request.method=='POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        try:
-            requiredArgumentValidation([(username, 'username'),
-                                        (password, 'password')])
-        except ValidationError as e:
-            return JsonResponse({"status": 401, "msg": e.messages})
         # Validate username
         try:
             usernameValidation(username)
@@ -80,15 +70,11 @@ def userLogout(request):
 
 @loginPermission
 @methodFilter(['POST'])
+@requiredArgumentPOST(['oldPassword','newPassword'])
 def userChangePassword(request):
     if request.method=='POST':
         oldPassword = request.POST.get('oldPassword')
         newPassword = request.POST.get('newPassword')
-        try:
-            requiredArgumentValidation([(oldPassword, 'oldPassword'),
-                                        (newPassword, 'newPassword')])
-        except ValidationError as e:
-            return JsonResponse({"status": 401, "msg": e.messages})
         try:
             validate_password(newPassword, request.user)
         except ValidationError as e:
@@ -106,13 +92,10 @@ def userChangePassword(request):
 
 @loginPermission
 @methodFilter(['POST'])
+@requiredArgumentPOST(['grade'])
 def userSetGrade(request):
     if request.method=='POST':
         grade=request.POST.get('grade')
-        try:
-            requiredArgumentValidation([(grade,'grade')])
-        except ValidationError as e:
-            return JsonResponse({"status":401,"msg":e.messages})
         try:
             gradeValidation(grade)
         except ValidationError as e:

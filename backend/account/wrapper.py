@@ -28,3 +28,4 @@ def methodFilter(allowedMethod):
                 return func(request,*args,**kwargs)
         return inner
     return outer
+

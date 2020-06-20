@@ -1,4 +1,4 @@
-
+from django.http import JsonResponse
 
 def userGETFilter(filterArgs):
     def outer(func):
