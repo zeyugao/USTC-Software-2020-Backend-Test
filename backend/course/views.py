@@ -47,14 +47,14 @@ class AvailableCourses(View):
             'msg': 'Success'
         })
 
-@login_required
+@method_decorator(login_required, name = 'dispatch')
 class MyCourse(View):
     def get(self, request, *args, **kwargs):
         courses = request.user.student.course_set.all()
         context = { 'courses': courses }
         return JsonResponse({
             'status': 200,
-            'msg': 'Success'
+            'msg': context
         })
 
 @method_decorator(login_required, name = 'dispatch')

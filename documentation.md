@@ -22,16 +22,11 @@
 ### URL
 `account/register`
 #### 請求參數
-|key|description|
-|----|---|
-|username|用戶名|
-|password1|密碼|
-|password2|重複密碼|
-|grade|從Freshman Sophmore Junior Senior Graduate中選擇一個作為年級|
+無
 #### 響應參數
 |key|description|
 |---|-------|
-|msg|阿就消息啊|
+|msg|2 forms. 1st form 'user_form' containing 3 fields(username, password1, password2). 2nd form 'student_form' containing only 1 choice field, grade.|
 
 |status|description|
 |----|---|
