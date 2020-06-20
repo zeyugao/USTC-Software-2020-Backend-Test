@@ -5,18 +5,20 @@ from django.contrib.auth import get_user_model
 from account.wrapper import loginPermission, unLogPermission, methodFilter
 from account.validate import requiredArgumentValidation, gradeValidation
 from django.core.exceptions import ValidationError
+from .filters import userGETFilter, commonGETFilter
 
 userModel = get_user_model()
 
 
 @loginPermission
 @methodFilter(['GET'])
-def listUserResult(request):
+@userGETFilter([('result__grade__lt', 'gradeFilter', 'grade')])
+def listUserResult(request, userFilter):
     if request.method == 'GET':
         result = [{"pk": i.result.courseID,
                    "course": i.result.name,
                    "haveLearnt": i.haveLearnt
-                   } for i in request.user.resultSet.all()]
+                   } for i in request.user.resultSet.all().filter(**userFilter)]
         return JsonResponse({"status": 200, "total": len(result), "course": result})
 
 
@@ -115,19 +117,20 @@ def exitCourse(request):
 
 
 @methodFilter(['GET'])
-def listAllCourse(request):
+@userGETFilter([('grade__lt', 'gradeFilter', 'grade')])
+@commonGETFilter([('grade', 'grade', 'grade')])
+def listAllCourse(request, userFilter, commonFilter):
     if request.method == 'GET':
         grade = request.GET.get('grade')
-        if not grade:
-            result = [{"pk": i.courseID,
-                       "course": i.name} for i in course.objects.filter()]
-        else:
+        if grade:
             try:
                 gradeValidation(grade)
             except ValidationError as e:
                 return JsonResponse({"status": 417, "msg": e.messages})
-            result = [{"pk": i.courseID,
-                       "course": i.name} for i in course.objects.filter(grade=grade)]
+        print(userFilter)
+        print(commonFilter)
+        result = course.objects.all().filter(**userFilter).filter(**commonFilter)
+        result = [{"pk": i.courseID, "course": i.name} for i in result]
 
         return JsonResponse({"status": 200, "total": len(result), "course": result})
 
@@ -147,3 +150,18 @@ def listPrefix(request):
             "pk": i.prefix.courseID,
             "course": i.prefix.name} for i in searchResult[0].prefixSet.all()]
         return JsonResponse({"status": 200, "total": len(result), "course": result})
+
+@loginPermission
+@methodFilter(['GET'])
+def haveLearntCourse(request):
+    if request.method=='GET':
+        pk = request.GET.get('pk')
+        try:
+            requiredArgumentValidation([(pk, "pk")])
+        except ValidationError as e:
+            return JsonResponse({"status": 401, "msg": e.messages})
+        userSearchResult = request.user.resultSet.filter(result__courseID=pk)
+        if not userSearchResult:
+            return JsonResponse({"status": 416, "msg": "You havn\'t chosen the course."})
+        userSearchResult = userSearchResult[0]
+        return JsonResponse({"status":200,"haveLearnt":userSearchResult.haveLearnt})

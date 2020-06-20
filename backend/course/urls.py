@@ -8,5 +8,6 @@ urlpatterns = [
     path('setLearnStatus',views.setLearnStatus,name='revSetLearnStatus'),
     path('exitCourse',views.exitCourse,name='revExitCourse'),
     path('listAllCourse',views.listAllCourse,name='revListAllCourse'),
-    path('listPrefix',views.listPrefix,name='revListPrefix')
+    path('listPrefix',views.listPrefix,name='revListPrefix'),
+    path('haveLearntCourse',views.haveLearntCourse,name='revHaveLearntCourse')
 ]
