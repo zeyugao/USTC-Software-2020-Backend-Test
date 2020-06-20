@@ -10,8 +10,8 @@ from .wrapper import loginPermission, unLogPermission, methodFilter
 userModel = get_user_model()
 
 
-@unLogPermission
 @methodFilter(['POST'])
+@unLogPermission
 @requiredArgumentPOST(['username','password','grade'])
 def userRegistration(request):
     if request.method=='POST':
@@ -39,8 +39,8 @@ def userRegistration(request):
         return JsonResponse({"status": 200, "msg": "Register successfully."})
 
 
-@unLogPermission
 @methodFilter(['POST'])
+@unLogPermission
 @requiredArgumentPOST(['username','password'])
 def userLogin(request):
     if request.method=='POST':
@@ -60,16 +60,16 @@ def userLogin(request):
             return JsonResponse({"status": 403, "msg": "Wrong username or password."})
 
 
-@loginPermission
 @methodFilter(['GET'])
+@loginPermission
 def userLogout(request):
     if request.method=='GET':
         logout(request)
         return JsonResponse({"status": 200, "msg": "Logout successfully."})
 
 
-@loginPermission
 @methodFilter(['POST'])
+@loginPermission
 @requiredArgumentPOST(['oldPassword','newPassword'])
 def userChangePassword(request):
     if request.method=='POST':
@@ -90,8 +90,8 @@ def userChangePassword(request):
             return JsonResponse({"status": 410, "msg": "Old password is wrong."})
 
 
-@loginPermission
 @methodFilter(['POST'])
+@loginPermission
 @requiredArgumentPOST(['grade'])
 def userSetGrade(request):
     if request.method=='POST':

@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 #Here some decorators.
 #loginPermission: view function with this decorator need user to login first.
 def loginPermission(func):
@@ -23,7 +23,7 @@ def methodFilter(allowedMethod):
     def outer(func):
         def inner(request,*args,**kwargs):
             if not (request.method in allowedMethod):
-                return JsonResponse({"status": 400,"msg": "Request method mismatch."})
+                return HttpResponse("Method mismatch.",status=405)
             else:
                 return func(request,*args,**kwargs)
         return inner

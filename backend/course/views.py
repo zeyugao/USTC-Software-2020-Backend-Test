@@ -11,9 +11,9 @@ from account.validate import requiredArgumentGET
 userModel = get_user_model()
 
 
-@loginPermission
 @methodFilter(['GET'])
-@userGETFilter([('result__grade__lt', 'gradeFilter', 'grade')])
+@loginPermission
+@userGETFilter([('result__grade__lte', 'gradeFilter', 'grade')])
 def listUserResult(request, userFilter):
     if request.method == 'GET':
         result = [{"pk": i.result.courseID,
@@ -23,8 +23,8 @@ def listUserResult(request, userFilter):
         return JsonResponse({"status": 200, "total": len(result), "course": result})
 
 
-@loginPermission
 @methodFilter(['GET'])
+@loginPermission
 @requiredArgumentGET(['pk'])
 def setLearnStatus(request):
     if request.method == 'GET':
@@ -46,8 +46,8 @@ def setLearnStatus(request):
         return JsonResponse({"status": 200, "msg": "Update the learning status successfully."})
 
 
-@loginPermission
 @methodFilter(['GET'])
+@loginPermission
 @requiredArgumentGET(['pk'])
 def chooseCourse(request):
     if request.method == 'GET':
@@ -66,7 +66,7 @@ def chooseCourse(request):
         searchResult = searchResult[0]
 
         # Check grade.
-        if not searchResult.grade > request.user.grade:
+        if searchResult.grade > request.user.grade:
             return JsonResponse({"status": 414, "msg": "Not for your grade."})
 
         # Check if all prefix have been achieved.
@@ -85,8 +85,8 @@ def chooseCourse(request):
         return JsonResponse({"status": 200, "msg": "Choose course successfully."})
 
 
-@loginPermission
 @methodFilter(['GET'])
+@loginPermission
 @requiredArgumentGET(['pk'])
 def exitCourse(request):
     if request.method == 'GET':
@@ -108,7 +108,7 @@ def exitCourse(request):
 
 
 @methodFilter(['GET'])
-@userGETFilter([('grade__lt', 'gradeFilter', 'grade')])
+@userGETFilter([('grade__lte', 'gradeFilter', 'grade')])
 @commonGETFilter([('grade', 'grade', 'grade')])
 def listAllCourse(request, userFilter, commonFilter):
     if request.method == 'GET':
@@ -139,8 +139,8 @@ def listPrefix(request):
             "course": i.prefix.name} for i in searchResult[0].prefixSet.all()]
         return JsonResponse({"status": 200, "total": len(result), "course": result})
 
-@loginPermission
 @methodFilter(['GET'])
+@loginPermission
 @requiredArgumentGET(['pk'])
 def haveLearntCourse(request):
     if request.method=='GET':
