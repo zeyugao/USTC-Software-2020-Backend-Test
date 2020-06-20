@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from account.wrapper import loginPermission, unLogPermission, methodFilter
 from account.validate import requiredArgumentValidation, gradeValidation
 from django.core.exceptions import ValidationError
-from .filters import userGETFilter, commonGETFilter
+from .filters import userGETFilter, normalGETFilter
 from account.validate import requiredArgumentGET
 
 userModel = get_user_model()
@@ -109,8 +109,8 @@ def exitCourse(request):
 
 @methodFilter(['GET'])
 @userGETFilter([('grade__lte', 'gradeFilter', 'grade')])
-@commonGETFilter([('grade', 'grade', 'grade')])
-def listAllCourse(request, userFilter, commonFilter):
+@normalGETFilter([('grade', 'grade', 'grade')])
+def listAllCourse(request, userFilter, normalFilter):
     if request.method == 'GET':
         grade = request.GET.get('grade')
         if grade:
@@ -119,8 +119,8 @@ def listAllCourse(request, userFilter, commonFilter):
             except ValidationError as e:
                 return JsonResponse({"status": 417, "msg": e.messages})
         print(userFilter)
-        print(commonFilter)
-        result = course.objects.all().filter(**userFilter).filter(**commonFilter)
+        print(normalFilter)
+        result = course.objects.all().filter(**userFilter).filter(**normalFilter)
         result = [{"pk": i.courseID, "course": i.name} for i in result]
 
         return JsonResponse({"status": 200, "total": len(result), "course": result})

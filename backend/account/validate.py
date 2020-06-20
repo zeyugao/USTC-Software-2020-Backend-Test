@@ -29,6 +29,8 @@ def gradeValidation(grade):
 
 
 
+
+
 def requiredArgumentValidation(args):
     msg="Argment lost: "
     lost=0
@@ -38,6 +40,35 @@ def requiredArgumentValidation(args):
             lost+=1
     if lost: raise ValidationError(msg+".")
 
+'''
+    To validate the wholeness of request Parameters, and list the lost Parameter. 
+    The requiredArgs accepts a list of Parameters the function needs.
+    For example:
+
+        @requiredArgumentGET(['username','password'])
+        def login(request):
+            ......
+        
+    Then when the function deal with a GET request, it'll work only if username and password were
+    both given.
+    If not, it will return a status code 401, and message telling you the list of lost parameters.
+
+    Same use as requiredArgumentPost.
+
+    Notice:
+    You can use both of them, to deal with different methods.
+    For example:
+
+        @requiredArgumentGET(['username','password'])
+        @requiredArgumentPOST(['grade'])
+        def login(request):
+            ......
+    
+    The first decorator will work when the request method is GET, the second decorator will work 
+    when the method is POST. They won't conflict.
+
+
+'''
 def requiredArgumentGET(requiredArgs):
     def outer(func):
         def inner(request,*args,**kwargs):
