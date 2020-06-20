@@ -10,8 +10,8 @@ class GetAllView(View):
     http_method_names = ['get']
 
     def get(self, request):
-        allcourse = Ke.objects.all().order_by('kid')
-        allcoursedict = [model_to_dict(course, fields=['id', 'name', 'grade']) for course in allcourse]
+        allcourse = Ke.objects.all().order_by('pk')
+        allcoursedict = [model_to_dict(course, fields=['pk', 'name', 'grade']) for course in allcourse]
         return JsonResponse({
             'code': 200,
             'msg': allcoursedict
@@ -20,8 +20,13 @@ class GetAllView(View):
 class GetPrivkeView(View):
     http_method_names = ['get']
 
-    # def get(self, request):
-        # privke = request.
+    def get(self, request):
+        privke = request.user.Stu.Ke_set.all().order_by('pk')
+        privkedict = [model_to_dict(course, fields=['pk', 'name', 'grade']) for course in privke]
+        return JsonResponse({
+            'code': 200,
+            'msg': privkedict
+        })
 
 class ElecKeView(View):
     http_method_names = ['get', 'post']
@@ -29,7 +34,18 @@ class ElecKeView(View):
     def get(self, request):
         pass
 
-    # def post(self, request):
+    def post(self, request):
+        kid = request.POST.get('kid')
+        if Ke.objects.filter(pk = kid).exists():
+            Ke.stu.add(request.user.Stu)
+            return JsonResponse({
+                'code': 200,
+                'msg': 'Elec Ke successfully'
+            })
+        return JsonResponse({
+            'code': 404,
+            'msg': 'Invalid kid'
+        })
     
 class DropKeView(View):
     http_method_names = ['get', 'post']
