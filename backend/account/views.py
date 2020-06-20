@@ -29,54 +29,44 @@ class Login(View):
 
 class Register(View):
     def get(self, request):
-        pass
-    def post(self, request, *args, **kwargs):
-        grade_dict = {
-            'Freshman': 'FR',
-            'Sophmore': 'SO',
-            'Junior': 'JR',
-            'Senior': 'SR',
-            'Graduate': 'GR',
+        user_form = UserForm()
+        student_form = StudentForm()
+        context = {
+            'user_form': user_form,
+            'student_form': student_form,
         }
-        username = request.POST.get('username')
-        password1 = request.POST.get('password1')
-        password2 = request.POST.get('password2')
-        try:#TO DO!!
-            validate(username)
-        except ValidationError as e:
-            return JsonResponse({
-                'status': 410,
-                'msg': e.messages
-            })
-        try:#TO DO!!
-            validate(password1)
-        except ValidationError as e:
-            return JsonResponse({
-                'status': 410,
-                'msg': e.messages
-            })
-        try:
-            grade = grade_dict[request.POST.get('grade')]
-        except KeyError:
-            return JsonResponse({
-                'status': 410,
-                'msg': 'Key does not exist'
-            })
-        user = User.objects.create(username=username, password=password1)
-        Student.objects.create(
-            user = user,
-            grade = grade
-        )
         return JsonResponse({
             'status': 200,
-            'msg': 'Student Created Successfully'
+            'msg': '2 forms'
         })
+    def post(self, request, *args, **kwargs):
+        user_form = UserForm(request.POST)
+        student_form = StudentForm(request.POST)
+        if user_form.is_valid() and student_form.is_valid():
+            user = user_form.save()
+            student = student_form.save(commit=False)
+            student.user = user
+            student.save()
+            return JsonResponse({
+                'status': 200,
+                'msg': 'Student Created Successfully'
+            })
+        elif not user_form.is_valid():
+            return JsonResponse({
+                'status': 410,
+                'msg': user_form.errors
+            })
 
 class Logout(View):
     def post(self, request):
         if request.user.is_authenticated:
             logout(request)
-        return JsonResponse({
-            'status': 200,
-            'msg': 'Logout Successfully'
-        })
+            return JsonResponse({
+                'status': 200,
+                'msg': 'Logout Successfully'
+            })
+        else:
+            return JsonResponse({
+                'status': 401,
+                'msg': 'Not logged in'
+            })
