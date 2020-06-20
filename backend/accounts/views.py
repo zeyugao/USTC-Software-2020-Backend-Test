@@ -3,10 +3,7 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.contrib.auth import logout
-from django.contrib.auth.password_validation import validate_password
 from accounts.models import Stu
-
-User = Stu.UserAccount
 
 class LoginView(View):
     http_method_names = ['get', 'post']
@@ -17,9 +14,9 @@ class LoginView(View):
     def post(self, request):
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user:
-            login(request, user)
+        user_login = authenticate(request, username=username, password=password)
+        if user_login:
+            login(request, user_login)
             return JsonResponse({
                 'code': 200,
                 'msg': 'Login successfully'
@@ -41,12 +38,12 @@ class RegisterView(View):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        if User.objects.filter(username=username).exists():
+        if Stu.user.objects.filter(username=username).exists():
             return JsonResponse({
                 'code': 401,
                 'msg': 'Invalid username'
             })
-        User.objects.create_user(username=username, password=password)
+        Stu.user.objects.create_user(username=username, password=password)
         return JsonResponse({
             'code': 200,
             'msg': 'Register successfully'
@@ -54,7 +51,10 @@ class RegisterView(View):
 
 
 class LogoutView(View):
-    http_method_names = ['post']
+    http_method_names = ['get', 'post']
+
+    def get(self, request):
+        pass
 
     def post(self, request):
         logout(request)

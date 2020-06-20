@@ -4,10 +4,10 @@ from django.contrib.auth.models import User
 
 class Stu(models.Model):
     grade = models.PositiveIntegerField(null=True, blank=True)
-    UserAccount = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 
 class Ke(models.Model):
     name = models.CharField(max_length=256)
     grade = models.PositiveIntegerField(null=True, blank=True)
-    stu = models.ManyToManyField(Stu)
+    stus = models.ManyToManyField(Stu)

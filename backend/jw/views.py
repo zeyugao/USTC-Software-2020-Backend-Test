@@ -21,7 +21,7 @@ class GetPrivkeView(View):
     http_method_names = ['get']
 
     def get(self, request):
-        privke = request.user.Stu.Ke_set.all().order_by('pk')
+        privke = request.user.stu.ke_set.all().order_by('pk')
         privkedict = [model_to_dict(course, fields=['pk', 'name', 'grade']) for course in privke]
         return JsonResponse({
             'code': 200,
@@ -37,7 +37,8 @@ class ElecKeView(View):
     def post(self, request):
         kid = request.POST.get('kid')
         if Ke.objects.filter(pk = kid).exists():
-            Ke.stu.add(request.user.Stu)
+            selectd_ke = Ke.objects.get(pk = kid)
+            selectd_ke.stus.add(request.user.stu)
             return JsonResponse({
                 'code': 200,
                 'msg': 'Elec Ke successfully'
@@ -53,4 +54,14 @@ class DropKeView(View):
     def get(self, request):
         pass
 
-    # def post(self, request):
+    def post(self, request):
+        kid = request.POST.get('kid')
+        if Ke.objects.filter(pk = kid).exists():
+            selectd_ke = Ke.objects.get(pk = kid)
+            try:
+                selectd_ke.stus.remove(request.user.stu)
+            except ValueError:
+                return JsonResponse({
+                    'status': 404,
+                    'msg': 'Invalid course status for user'
+                })
