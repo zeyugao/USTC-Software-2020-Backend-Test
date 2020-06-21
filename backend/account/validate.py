@@ -28,9 +28,6 @@ def gradeValidation(grade):
         raise ValidationError('Grade should not be greater than 4.')
 
 
-
-
-
 def requiredArgumentValidation(args):
     msg="Argment lost: "
     lost=0
@@ -80,7 +77,7 @@ def requiredArgumentGET(requiredArgs):
                     if not tempArg:
                         msg+=i+" "
                         lost+=1
-                if lost: return JsonResponse({"status":401,"msg":msg+"."})
+                if lost: return JsonResponse({"status":400,"msg":msg+"."})
             return func(request,*args,**kwargs)
         return inner
     return outer
@@ -97,7 +94,7 @@ def requiredArgumentPOST(requiredArgs):
                     if not tempArg:
                         msg+=i+" "
                         lost+=1
-                if lost: return JsonResponse({"status":401,"msg":msg+"."})
+                if lost: return JsonResponse({"status":400,"msg":msg+"."})
             return func(request,*args,**kwargs)
         return inner
     return outer

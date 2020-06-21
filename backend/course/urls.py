@@ -3,11 +3,11 @@ from . import views
 
 
 urlpatterns = [
-    path('userCourseResult',views.listUserResult,name='revResult'),
-    path('chooseCourse',views.chooseCourse,name='revChooseCourse'),
+    path('result',views.listUserResult,name='revResult'),
+    path('choose',views.chooseCourse,name='revChoose'),
     path('setLearnStatus',views.setLearnStatus,name='revSetLearnStatus'),
     path('exitCourse',views.exitCourse,name='revExitCourse'),
-    path('listAllCourse',views.listAllCourse,name='revListAllCourse'),
-    path('listPrefix',views.listPrefix,name='revListPrefix'),
+    path('list',views.listAllCourse,name='revList'),
+    path('prefix',views.listPrefix,name='revPrefix'),
     path('haveLearntCourse',views.haveLearntCourse,name='revHaveLearntCourse')
 ]
