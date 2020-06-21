@@ -107,7 +107,7 @@ URL: `accounts/login`
 | 参数 | 类型 | 描述   |
 | --- | ---- | ------ |
 | code | int | 返回值  |
-| msg | list | 状态描述 |
+| msg |  str | 状态描述 |
 
 其中 code 返回值的含义如下
 
@@ -134,7 +134,7 @@ URL: `accounts/register`
 | 参数 | 类型  | 描述     |
 | ---- | ---- | ------- |
 | code | int  | 返回值   |
-| msg  | list | 状态描述 |
+| msg  | str  | 状态描述 |
 
 其中 code 返回值的含义如下
 
@@ -158,7 +158,6 @@ URL: `accounts/logout`
 | 参数  | 类型  | 描述   |
 | ---- | ---- | ----- |
 | code | int  | 返回值 |
-| msg  | list | 状态描述 |
 
 其中 code 返回值的含义如下
 

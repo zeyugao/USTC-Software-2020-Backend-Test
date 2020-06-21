@@ -21,6 +21,11 @@ class GetPrivkeView(View):
     http_method_names = ['get']
 
     def get(self, request):
+        if not request.user.is_authenticated():
+            return JsonResponse({
+                'code': 401,
+                'msg': 'Login first'
+            })
         privke = request.user.stu.ke_set.all().order_by('pk')
         privkedict = [model_to_dict(course, fields=['pk', 'name', 'grade']) for course in privke]
         return JsonResponse({
@@ -35,10 +40,16 @@ class ElecKeView(View):
         pass
 
     def post(self, request):
+        if not request.user.is_authenticated():
+            return JsonResponse({
+                'code': 401,
+                'msg': 'Login first'
+            })
         kid = request.POST.get('kid')
         if Ke.objects.filter(pk = kid).exists():
             selectd_ke = Ke.objects.get(pk = kid)
             selectd_ke.stus.add(request.user.stu)
+            selectd_ke.save()
             return JsonResponse({
                 'code': 200,
                 'msg': 'Elec Ke successfully'
@@ -55,6 +66,11 @@ class DropKeView(View):
         pass
 
     def post(self, request):
+        if not request.user.is_authenticated():
+            return JsonResponse({
+                'code': 401,
+                'msg': 'Login first'
+            })
         kid = request.POST.get('kid')
         if Ke.objects.filter(pk = kid).exists():
             selectd_ke = Ke.objects.get(pk = kid)
@@ -62,6 +78,15 @@ class DropKeView(View):
                 selectd_ke.stus.remove(request.user.stu)
             except ValueError:
                 return JsonResponse({
-                    'status': 404,
+                    'code': 404,
                     'msg': 'Invalid course status for user'
                 })
+            selectd_ke.save()
+            return JsonResponse({
+                'code': 200,
+                'msg': 'Drop Ke successfully'
+            })
+        return JsonResponse({
+            'code': 403,
+            'msg': 'Invalid course id'
+        })

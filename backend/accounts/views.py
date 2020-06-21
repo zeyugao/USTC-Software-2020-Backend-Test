@@ -43,7 +43,8 @@ class RegisterView(View):
                 'code': 401,
                 'msg': 'Invalid username'
             })
-        Stu.user.objects.create_user(username=username, password=password)
+        newUser = Stu.user.objects.create_user(username=username, password=password)
+        newUser.save()
         return JsonResponse({
             'code': 200,
             'msg': 'Register successfully'
@@ -57,6 +58,10 @@ class LogoutView(View):
         pass
 
     def post(self, request):
+        if not request.user.is_authenticated():
+            return JsonResponse({
+                'code': 401
+            })
         logout(request)
         return JsonResponse({
             'code': 200,
