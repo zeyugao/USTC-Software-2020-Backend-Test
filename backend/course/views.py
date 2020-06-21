@@ -132,7 +132,7 @@ def chooseCourse(request):
         searchResult = searchResult[0]
 
         # Check grade.
-        if searchResult.grade > request.user.grade:
+        if not searchResult.grade == request.user.grade:
             return JsonResponse({"status": 415, "msg": "Not for your grade."})
 
         # Check if all prefix have been achieved.
@@ -228,8 +228,6 @@ def listAllCourse(request, userFilter, normalFilter):
                 gradeValidation(grade)
             except ValidationError as e:
                 return JsonResponse({"status": 403, "msg": e.messages})
-        print(userFilter)
-        print(normalFilter)
         result = course.objects.all().filter(**userFilter).filter(**normalFilter)
         result = [{"pk": i.courseID, "course": i.name} for i in result]
 

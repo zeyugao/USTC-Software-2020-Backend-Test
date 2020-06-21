@@ -20,7 +20,7 @@ def usernameValidation(username,regFlag=False):
 
 def gradeValidation(grade):
     if not grade.isdigit():
-        raise ValidationError('Grade should be a positive number.')
+        raise ValidationError('Grade should be a positive integer.')
     grade=int(grade)
     if grade<1:
         raise ValidationError('Grade should not be greater than 1.')

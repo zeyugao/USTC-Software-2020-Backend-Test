@@ -15,7 +15,7 @@ from django.http import JsonResponse,HttpResponse
 def loginPermission(func):
     def inner(request,**kwargs):
         if not request.user.is_authenticated:
-            return JsonResponse({"status": 405,"msg": "Please login first."})
+            return JsonResponse({"status": 406,"msg": "Please login first."})
         else:
             return func(request,**kwargs)
     return inner
@@ -34,7 +34,7 @@ def loginPermission(func):
 def unLogPermission(func):
     def inner(request,*args,**kwargs):
         if request.user.is_authenticated:
-            return JsonResponse({"status": 404,"msg": "You\'ve login. Please logout first."})
+            return JsonResponse({"status": 405,"msg": "You\'ve login. Please logout first."})
         else:
             return func(request,*args,**kwargs)
     return inner

@@ -133,6 +133,7 @@ def userLogout(request):
             含义
                 200 : 成功修改密码
                 400 : 缺少某些参数 （具体参数会在msg中给出）
+                404 : 新旧密码相同
                 406 : 尚未登陆
                 408 : 新密码不符合要求
                 409 : 旧密码错误
@@ -146,6 +147,8 @@ def userChangePassword(request):
     if request.method=='POST':
         oldPassword = request.POST.get('oldPassword')
         newPassword = request.POST.get('newPassword')
+        if oldPassword==newPassword:
+            return JsonResponse({"status": 404, "msg": "Unchanged password."})
         try:
             validate_password(newPassword, request.user)
         except ValidationError as e:
@@ -186,7 +189,7 @@ def userSetGrade(request):
         try:
             gradeValidation(grade)
         except ValidationError as e:
-            return JsonResponse({"status":417,"msg":e.messages})
+            return JsonResponse({"status":403,"msg":e.messages})
         request.user.grade=int(grade)
         request.user.save()
         return JsonResponse({"status":200,"msg":"Update grade successfully."})
