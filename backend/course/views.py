@@ -107,6 +107,8 @@ def setLearnStatus(request):
                 415 : 课程不符合年级
                 416 : 前置课程未学习
             
+            total<int> : 还未满足的前置课程数目
+
             requiredPk<list> : 状态码为416时，返回还未学习的前置课程
                 |---- pk<str> : 课程唯一编码
             
@@ -142,7 +144,7 @@ def chooseCourse(request):
             if not ((i, True) in userSearchResult):
                 requiredPrefix.append({"pk": i})
         if requiredPrefix:
-            return JsonResponse({"status": 416, "msg": "You haven\'t met all requirement.", "requiredPk": requiredPrefix})
+            return JsonResponse({"status": 416, "msg": "You haven\'t met all requirement.","total":len(requiredPrefix), "requiredPk": requiredPrefix})
 
         # Choose course, write it in result.
         resultInstance = courseResult(

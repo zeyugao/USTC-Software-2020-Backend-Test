@@ -125,7 +125,7 @@ class CourseModelTests(TestCase):
         #prefix lost
 
 
-        r=len(json.loads(self.client.get('/course/choose?pk=BX0006').content)["requiredPk"])
+        r=json.loads(self.client.get('/course/choose?pk=BX0006').content)["total"]
         self.assertEqual(r,2)
         #normal
 
