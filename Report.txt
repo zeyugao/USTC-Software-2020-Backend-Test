@@ -254,11 +254,3 @@
 | 200    | 展示成功         |
 | 301    | 未登录           |
 | 312    | 用户没有任何选课 |	
-
-
-备注：
-1、尝试使用了templates，但十分简陋
-2、主要参考了django documentation   https://docs.djangoproject.com/en/3.0/
-   和'刘江的django教程'  https://www.liujiangblog.com/course/django/108
-3、本篇文档和代码中的注释、code返回值，主要参考了去年后端测试中Elsa Granger的提交（因为基本上我只能看懂注释。。。）
-   https://github.com/taoky/USTC-Software-2019-BE-Test/tree/pr-gzy
