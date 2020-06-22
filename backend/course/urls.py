@@ -18,7 +18,7 @@ from django.urls import path, include
 from .views import *
 urlpatterns = [
     path('all/', AllCourses.as_view(), name = 'all'),
-    path('available', AvailableCourses.as_view(), name = 'available'),
     path('enroll<int:pk>/', Enroll.as_view(), name = 'enroll'),
     path('mine/', MyCourse.as_view(), name = 'mine'),
+    path('drop/<int:pk>/', DropCourse.as_view(), name = 'drop')
 ]

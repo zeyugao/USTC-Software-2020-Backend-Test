@@ -3,11 +3,14 @@ from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 from .models import *
 from .forms import *
+from .decorators import *
 from django.contrib.auth import authenticate, login, logout
+from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.views import View
 # Create your views here.
 
+@method_decorator(unauthenticated_user, name = 'dispatch')
 class Login(View):
     def get(self, request):
         pass
@@ -27,24 +30,25 @@ class Login(View):
                 'msg': 'Login Failed'
             })
 
+@method_decorator(unauthenticated_user, name = 'dispatch')
 class Register(View):
     def get(self, request):
         user_form = UserForm()
         student_form = StudentForm()
-        context = {
+        forms = {
             'user_form': user_form,
             'student_form': student_form,
         }
         return JsonResponse({
             'status': 200,
-            'msg': '2 forms'
+            'msg': forms
         })
     def post(self, request, *args, **kwargs):
         user_form = UserForm(request.POST)
         student_form = StudentForm(request.POST)
         if user_form.is_valid() and student_form.is_valid():
             user = user_form.save()
-            student = student_form.save(commit=False)
+            student = student_form.save(commit = False)
             student.user = user
             student.save()
             return JsonResponse({

@@ -8,15 +8,16 @@
 |username|用戶名|
 |password|密碼|
 #### 響應參數
+POST:
 |key|description|
 |---|-------|
-|msg|阿就消息啊|
+|msg|阿就消息|
 
 |status|description|
 |----|---|
 |200|成功|
-|401|登陸失敗|
-|500|服務器內部錯誤|
+|401|登陸失敗，wrong username or password|
+|405|Already Logged in|
 
 ## Register
 ### URL
@@ -24,13 +25,19 @@
 #### 請求參數
 無
 #### 響應參數
+GET:
 |key|description|
 |---|-------|
-|msg|2 forms. 1st form 'user_form' containing 3 fields(username, password1, password2). 2nd form 'student_form' containing only 1 choice field, grade.|
-
+|msg|2 forms. 1st form 'user_form' containing 3 fields(username, password1, password2). 2nd form 'student_form' containing only 1 choice field, grade.
 |status|description|
-|----|---|
 |200|成功|
+POST:
+|key|description|
+|-|-|
+|msg|傳入form.errors(a dictionary of error messages)，或者成功註冊|
+|status|description|
+|200|成功|
+|405|Already Logged in|
 |410|用戶名或密碼錯誤|
 
 ## Logout
@@ -39,6 +46,7 @@
 #### 請求參數
 無
 #### 響應參數
+POST：
 |key|description|
 |---|-------|
 |msg|message|
@@ -50,6 +58,8 @@
 ## Enroll
 ### URL
 `course/enroll<int:pk>`
+
+Login Required.
 #### 請求參數
 |key|description|
 |--------|--------|
@@ -67,20 +77,8 @@
 ## All Courses
 ### URL
 `course/all`
-#### 請求參數
-無
-#### 響應參數
-|key|description|
-|---|-------|
-|msg|message|
 
-|status|description|
-|----|---|
-|200|成功|
-
-## Available Courses (for the user)
-### URL
-`course/available`
+Login not Required
 #### 請求參數
 無
 #### 響應參數
@@ -95,6 +93,8 @@
 ## My Courses
 ### URL
 `course/mine`
+
+Login Required
 #### 請求參數
 無
 #### 響應參數
@@ -109,6 +109,8 @@
 ## Drop Course
 ### URL
 `course/drop<int:pk>`
+
+Login Required
 #### 請求參數
 |key|description|
 |--------|--------|
@@ -122,4 +124,4 @@
 |----|---|
 |200|成功|
 |404|the course does not exist|
-|409|the course is not even enrolled in|
+|409|the course is not enrolled in|
