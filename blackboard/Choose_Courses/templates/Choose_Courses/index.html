@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+<title>首页</title>
+</head>
+<body>
+{% if message %}
+    <div class="alert alert-warning">{{ message }}</div>
+{% endif %}
+<h1>{{request.session.user_name}},欢迎回来！</h1>
+<p>所有开设课程</p>
+
+{% for key, value in output.items %}
+<br> <a href = "/detail/{{value}}" > {{key}}
+     <a href = "/choose/{{value}}">选课
+     <a href = "/cancel/{{value}}">退课 <a/>
+{% endfor %}
+<p>
+<a href = "/show">查看所有已选课程</a>
+<p>
+    <a href = "/logout/">登出</a>
+</p>
+</body>
+</html>
