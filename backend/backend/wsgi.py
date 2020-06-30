@@ -1,5 +1,5 @@
 """
-WSGI config for backend project.
+WSGI config for Cours_Selection_System project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
